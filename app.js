@@ -12,6 +12,8 @@ const cookieParser = require("cookie-parser")
 const globalErrorHandler = require("./controllers/errorControllers")
 
 const usersRouter = require("./routes/usersRoutes")
+const tourRouter = require("./routes/toursRoutes")
+const reviewRouter = require("./routes/reviewRoutes")
 
 const app = express()
 
@@ -21,7 +23,7 @@ app.set('views', path.join(__dirname, 'views'))
 // to serve static files
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use(cors({origin:true, credentials: true}));
+app.use(cors({ origin: true, credentials: true }));
 
 // for security 
 // app.use(helmet())
@@ -40,12 +42,24 @@ const limiter = rateLimiter({
 
 app.use('/api', limiter)
 
+// prevent params pollution
+app.use(hpp({
+  whitelist: [
+    'duration',
+    'maxGroupSize',
+    'ratingAverage',
+    'ratingQuantity',
+    'price',
+    'difficulty'
+  ]
+}))
+
 // parser of body to req body
-app.use(express.json( {limit: '10kb'} ))
+app.use(express.json({ limit: '10kb' }))
 
 app.use(express.urlencoded({
-  extended:true,
-  limit:'10kb'
+  extended: true,
+  limit: '10kb'
 }))
 
 app.use(cookieParser())
@@ -58,12 +72,14 @@ app.use(xss())
 
 app.use((req, res, next) => {
   req.timeofreq = new Date().toDateString()
-  console.log("Time of Req ",req.timeofreq)
+  console.log("Time of Req ", req.timeofreq)
   next()
 })
 
 // routes
 app.use("/api/v1/users", usersRouter)
+app.use("/api/v1/tours", tourRouter)
+app.use("/api/v1/reviews", reviewRouter)
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Cannot find URL 😭 ${req.originalUrl} on this server !`, 404))
