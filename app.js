@@ -15,6 +15,7 @@ const usersRouter = require("./routes/usersRoutes")
 const tourRouter = require("./routes/toursRoutes")
 const reviewRouter = require("./routes/reviewRoutes")
 const bookingRouter = require("./routes/bookingRoutes")
+const viewRouter = require("./routes/viewRoutes")
 
 const app = express()
 
@@ -78,6 +79,8 @@ app.use((req, res, next) => {
 })
 
 // routes
+app.use("/", viewRouter)
+
 app.use("/api/v1/users", usersRouter)
 app.use("/api/v1/tours", tourRouter)
 app.use("/api/v1/reviews", reviewRouter)
