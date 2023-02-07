@@ -9,6 +9,10 @@ const hpp = require("hpp")
 const mongoSanitize = require("express-mongo-sanitize")
 const cookieParser = require("cookie-parser")
 
+const globalErrorHandler = require("./controllers/errorControllers")
+
+const usersRouter = require("./routes/usersRoutes")
+
 const app = express()
 
 app.set('view engine', 'pug')
@@ -59,5 +63,12 @@ app.use((req, res, next) => {
 })
 
 // routes
+app.use("/api/v1/users", usersRouter)
+
+app.all("*", (req, res, next) => {
+  next(new AppError(`Cannot find URL 😭 ${req.originalUrl} on this server !`, 404))
+})
+
+app.use(globalErrorHandler)
 
 module.exports = app
