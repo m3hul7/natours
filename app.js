@@ -9,6 +9,7 @@ const hpp = require("hpp")
 const mongoSanitize = require("express-mongo-sanitize")
 const cookieParser = require("cookie-parser")
 
+const AppError = require("./utils/appError")
 const globalErrorHandler = require("./controllers/errorControllers")
 
 const usersRouter = require("./routes/usersRoutes")
